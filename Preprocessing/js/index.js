@@ -22,7 +22,9 @@ var a = [{}];
 var invalid = 'none None "" unknown';
  
 var keys = ["activity", "age", "area", "city", "country", "date", "fatal", "type", "year", "sex"];
- 
+
+var processedData;
+
 function cleanData(data){
     data.forEach(e => {
         var aux = 0;
@@ -34,5 +36,29 @@ function cleanData(data){
         }
         if(aux<=0)a.push(e);
     });
-    console.log(a)
+    // console.log(a)
 }
+var coordinates = [{}];
+var geocoder = new google.maps.Geocoder();
+function getCoordinates(city, area, country){
+    var address = city+", "+area+", "+country;
+    geocoder.geocode({'address': address}, (results, status)=>{
+        if(status == google.maps.GeocoderStatus.OK){
+            var lat = results[0].geometry.location.lat();
+            var lgn = results[0].geometry.location.lng();
+            coordinates.push({"lat": lat, "lng": lgn});
+            return [lat, lgn];
+        }else{
+            alert("Something went wrong "+status);
+        }
+    });
+
+}
+
+var coordinatesAux = loadAllCoordinates(a);
+
+function loadAllCoordinates(addresses){
+    return addresses.map(address => { return getCoordinates(address.city, address.area, address.country); });
+}
+
+ console.log(coordinatesAux);
