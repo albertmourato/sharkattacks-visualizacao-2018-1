@@ -42,23 +42,27 @@ var coordinates = [{}];
 var geocoder = new google.maps.Geocoder();
 function getCoordinates(city, area, country){
     var address = city+", "+area+", "+country;
-    geocoder.geocode({'address': address}, (results, status)=>{
+    await geocoder.geocode({'address': address}, (results, status)=>{
         if(status == google.maps.GeocoderStatus.OK){
             var lat = results[0].geometry.location.lat();
             var lgn = results[0].geometry.location.lng();
             coordinates.push({"lat": lat, "lng": lgn});
+            console.log('lat: '+lat+' lng: '+lng)
             return [lat, lgn];
         }else{
-            alert("Something went wrong "+status);
+            console.log("Something went wrong "+status);
         }
     });
+}
 
+
+function loadAllCoordinates(addresses){
+    addresses.forEach(address => {
+        getCoordinates(address.city, address.area, address.country);
+    });
+    // return addresses.map(address => { return getCoordinates(address.city, address.area, address.country); });
 }
 
 var coordinatesAux = loadAllCoordinates(a);
 
-function loadAllCoordinates(addresses){
-    return addresses.map(address => { return getCoordinates(address.city, address.area, address.country); });
-}
-
- console.log(coordinatesAux);
+console.log(coordinatesAux);
