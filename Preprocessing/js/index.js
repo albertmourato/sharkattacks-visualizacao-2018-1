@@ -38,17 +38,19 @@ function cleanData(data){
     });
     // console.log(a)
 }
+
+
 var coordinates = [{}];
 var geocoder = new google.maps.Geocoder();
-function getCoordinates(city, area, country){
+
+async function getLocationCoordinates(city, area, country){
     var address = city+", "+area+", "+country;
     await geocoder.geocode({'address': address}, (results, status)=>{
         if(status == google.maps.GeocoderStatus.OK){
             var lat = results[0].geometry.location.lat();
-            var lgn = results[0].geometry.location.lng();
-            coordinates.push({"lat": lat, "lng": lgn});
+            var lng = results[0].geometry.location.lng();
             console.log('lat: '+lat+' lng: '+lng)
-            return [lat, lgn];
+            return ({"lat": lat, "lng": lng});
         }else{
             console.log("Something went wrong "+status);
         }
@@ -56,13 +58,25 @@ function getCoordinates(city, area, country){
 }
 
 
-function loadAllCoordinates(addresses){
-    addresses.forEach(address => {
-        getCoordinates(address.city, address.area, address.country);
-    });
-    // return addresses.map(address => { return getCoordinates(address.city, address.area, address.country); });
+function saveCoordinates(city, area, country){
+    var coordinate = getLocationCoordinates(city, area, country);
+    coordinates.push(coordinate);
 }
 
-var coordinatesAux = loadAllCoordinates(a);
 
-console.log(coordinatesAux);
+function loadAllCoordinates(addresses){
+    addresses.forEach(address => {
+        getLocationCoordinates(address.city, address.area, address.country);
+        sleep(30000);
+    });
+}
+
+function groupBy(field, data){
+    var ret = data.reduce(function (r, a) {
+        r[a[field]] = r[a[field]] || [];
+        r[a[field]].push(a);
+        return r;
+    }, Object.create(null));
+    return ret;
+}
+
