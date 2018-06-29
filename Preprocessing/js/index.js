@@ -72,11 +72,9 @@ function loadAllCoordinates(addresses){
 }
 
 function groupBy(field, data){
-    var ret = data.reduce(function (r, a) {
+    return data.reduce(function (r, a) {
         r[a[field]] = r[a[field]] || [];
         r[a[field]].push(a);
         return r;
     }, Object.create(null));
-    return ret;
 }
-
