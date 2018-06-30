@@ -14,18 +14,19 @@ d3.csv("./data/attacks.csv", (data => {
             sex: e["Sex "]
         }
     });
-    cleanData(dados)
+    filterByValidKeys(dados)
     // console.log(dados)
 }));
  
 var a = [{}];
 var invalid = 'none None "" unknown';
  
-var keys = ["activity", "age", "area", "city", "country", "date", "fatal", "type", "year", "sex"];
+// var keys = ["activity", "age", "area", "city", "country", "date", "fatal", "type", "year", "sex"];
+var keys = ["country"];
 
 var processedData;
 
-function cleanData(data){
+function filterByValidKeys(data){
     data.forEach(e => {
         var aux = 0;
         for(var i = 0 ; i < keys.length ; i++){
