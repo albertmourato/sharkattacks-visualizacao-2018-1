@@ -1,12 +1,18 @@
-var fatalHistWidth = 280;
-var fatalHistHeight = 380;
+var histWidth = 280;
+var histHeight = 380;
 
 var containerFatalHist = d3.select("#fatalhist")
     .append("svg")
-    .attr("width", fatalHistWidth)
-    .attr("height", fatalHistHeight);
-
+    .attr("width", histWidth)
+    .attr("height", histHeight);
 var fatalHist = {};
+
+var containerSexHist = d3.select("#sexhist")
+    .append("svg")
+    .attr("width", histWidth)
+    .attr("height", histHeight);
+var sexHist = {};
+
 
 async function getLocationCoordinates(city, area, country){
     var address = city+", "+area+", "+country;
@@ -39,8 +45,11 @@ d3.csv("./data/attacks.csv", (data => {
     });
     filterByValidKeys(dados);
 
-    fatalHist = new Histogram(containerFatalHist, 0, 0, fatalHistWidth, fatalHistHeight,
+    fatalHist = new Histogram(containerFatalHist, 0, 0, histWidth, histHeight,
         "Fatal attacks", dictToList('fatal'));
+
+    sexHist = new Histogram(containerSexHist, 0, 0, histWidth, histHeight,
+        "Attacks by sex", dictToList('sex'));
 }));
  
 var a = [{}];
