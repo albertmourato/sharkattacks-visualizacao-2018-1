@@ -65,3 +65,9 @@ function groupBy(field, data){
         return r;
     }, Object.create(null));
 }
+
+function getCountryIncidentsValue(country){
+    var x = groupBy('country', a);
+    var aux = x[country.toUpperCase()];
+    return aux != undefined? aux.length : "None";
+}
