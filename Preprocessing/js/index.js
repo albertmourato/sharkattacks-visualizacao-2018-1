@@ -1,3 +1,13 @@
+var fatalHistWidth = 280;
+var fatalHistHeight = 380;
+
+var containerFatalHist = d3.select("#fatalhist")
+    .append("svg")
+    .attr("width", fatalHistWidth)
+    .attr("height", fatalHistHeight);
+
+var fatalHist = {};
+
 async function getLocationCoordinates(city, area, country){
     var address = city+", "+area+", "+country;
     await geocoder.geocode({'address': address}, (results, status)=>{
@@ -27,8 +37,10 @@ d3.csv("./data/attacks.csv", (data => {
             sex: e["Sex "]
         }
     });
-    filterByValidKeys(dados)
-    // console.log(dados)
+    filterByValidKeys(dados);
+
+    fatalHist = new Histogram(containerFatalHist, 0, 0, fatalHistWidth, fatalHistHeight,
+        "Fatal attacks", dictToList('fatal'));
 }));
  
 var a = [{}];
@@ -69,10 +81,12 @@ function groupBy(field, data){
 function getCountryIncidentsValue(country){
     var x = groupBy('country', a);
     var aux = x[country.toUpperCase()];
+
     return aux != undefined? aux.length : "None";
 }
 
-var dictToList = function(dict){
+var dictToList = function(column){
+    var dict = groupBy(column, a);
     var list = [];
     for(var key in dict){
         if(key !== "undefined") list.push([key, dict[key].length]);
