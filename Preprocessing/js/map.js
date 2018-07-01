@@ -1,16 +1,11 @@
-var myMap = L.map('myMap').setView([-10.24, 0], 2);
+var myMap = L.map('myMap').setView([0, 0], 2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(myMap);
-
 var countriesGroup = L.layerGroup().addTo(myMap);
 
 
 function clearMap(){
     myMap.removeLayer(countriesGroup);
 }
-
-// Math.max.apply(Math,myData.map(function(o){return o.length;}))
-
-// var colorScale = d3.scaleLinear().domain([0, 1366]).range(['#FFAFBA','#FF0400']);
 
 stateGroup = L.layerGroup().addTo(myMap);
 
@@ -24,8 +19,6 @@ async function drawIncidentByState(){
         }).addTo(stateGroup);
     });
 }
-
-drawIncidentByState();
 
 function colorScale(numberOfAttack){
     if(numberOfAttack < 10) return "#FFE2E1"
@@ -51,10 +44,14 @@ function highlightFeature(e) {
     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
         layer.bringToFront();
     }
+
+    info.update(layer.feature.properties);
 }
 
 function resetHighlight(e) {
     geojson.resetStyle(e.target);
+
+    info.update();
 }
 
 function style(feature) {
@@ -62,7 +59,6 @@ function style(feature) {
     var color;
     if(x[(feature.properties.ADMIN).toUpperCase()] != undefined){
         colorScale(x[(feature.properties.ADMIN).toUpperCase()].length);
-        // console.log(x[(feature.properties.ADMIN).toUpperCase()].length);
         color = colorScale(x[(feature.properties.ADMIN).toUpperCase()].length);
     }else{
         color = "#A7A7A7";
@@ -77,9 +73,35 @@ function style(feature) {
     }
 }
 
+function getCountryIncidentsValue(country){
+    var x = groupBy('country', a);
+    var aux = x[country.toUpperCase()];
+    return aux != undefined? aux.length : "None";
+}
+
 function onEachFeature(feature, layer) {
     layer.on({
         mouseover: highlightFeature,
         mouseout: resetHighlight,
     });
 }
+
+
+// TOP RIGHT INFO
+
+var info = L.control();
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info.update = function (props) {
+    this._div.innerHTML = '<h4>World\'s Shark Attacks</h4>' +  (props?
+        '<b>' + getCountryIncidentsValue(props.ADMIN) + '</b><br />' + props.ADMIN
+        : 'Hover over a country');
+};
+
+info.addTo(myMap);
