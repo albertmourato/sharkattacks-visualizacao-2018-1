@@ -1,17 +1,16 @@
 var myMap = L.map('myMap').setView([0, 0], 2);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(myMap);
-var countriesGroup = L.layerGroup().addTo(myMap);
 
+var countriesGroup = L.layerGroup().addTo(myMap);
+var stateGroup = L.layerGroup().addTo(myMap);
 
 function clearMap(){
-    myMap.removeLayer(countriesGroup);
+    myMap.removeLayer(stateGroup);
 }
-
-stateGroup = L.layerGroup().addTo(myMap);
 
 var geojson;
 
-async function drawIncidentByState(){    
+function drawIncidentByState(){    
     d3.json('./data/countries.geojson', (error, data) => {
         geojson = L.geoJSON(data, {
             style: style,
@@ -55,6 +54,13 @@ function resetHighlight(e) {
 
 function style(feature) {
     var x = groupBy('country', a);
+
+    if(filterChecked){
+        x = getIncidentsByYear(year);
+        x = groupBy('country', x);
+        console.log(filterChecked);
+    }
+
     var color;
     if(x[(feature.properties.ADMIN).toUpperCase()] != undefined){
         colorScale(x[(feature.properties.ADMIN).toUpperCase()].length);
@@ -93,7 +99,7 @@ info.onAdd = function (map) {
 // method that we will use to update the control based on feature properties passed
 info.update = function (props) {
     this._div.innerHTML = '<h4>World\'s Shark Attacks</h4>' +  (props?
-        '<b>' + getCountryIncidentsValue(props.ADMIN) + '</b><br />' + props.ADMIN
+        '<b>' + countIncidentsByCountryYear(props.ADMIN, getYear()) + '</b><br />' + props.ADMIN
         : 'Hover over a country');
 };
 
