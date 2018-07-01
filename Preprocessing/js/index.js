@@ -70,7 +70,7 @@ function groupBy(field, data){
     }, Object.create(null));
 }
 
-function getCountryIncidentsValue(country){
+function countIncidentsByCountry(country){
     var x = groupBy('country', a);
     var aux = x[country.toUpperCase()];
     return aux != undefined? aux.length : "None";

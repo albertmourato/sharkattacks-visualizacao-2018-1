@@ -98,8 +98,17 @@ info.onAdd = function (map) {
 
 // method that we will use to update the control based on feature properties passed
 info.update = function (props) {
+    var qtd;
+    if(props){
+        if(isFilterChecked()){
+            qtd = countIncidentsByCountryYear(props.ADMIN, getYear());
+        }else{
+            qtd = countIncidentsByCountry(props.ADMIN);
+        }
+    }
+
     this._div.innerHTML = '<h4>World\'s Shark Attacks</h4>' +  (props?
-        '<b>' + countIncidentsByCountryYear(props.ADMIN, getYear()) + '</b><br />' + props.ADMIN
+        '<b>' + qtd + '</b><br />' + props.ADMIN
         : 'Hover over a country');
 };
 
