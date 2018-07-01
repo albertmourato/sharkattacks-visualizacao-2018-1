@@ -35,8 +35,8 @@ function colorScale(numberOfAttack){
 function highlightFeature(e) {
     var layer = e.target;
     layer.setStyle({
-        weight: 3,
-        color: '#000',
+        weight: 2,
+        color: '#283747',
         dashArray: '',
         fillOpacity: 0.7
     });
@@ -50,7 +50,6 @@ function highlightFeature(e) {
 
 function resetHighlight(e) {
     geojson.resetStyle(e.target);
-
     info.update();
 }
 
@@ -71,12 +70,6 @@ function style(feature) {
         color: "#FFF",
         fillOpacity: 1
     }
-}
-
-function getCountryIncidentsValue(country){
-    var x = groupBy('country', a);
-    var aux = x[country.toUpperCase()];
-    return aux != undefined? aux.length : "None";
 }
 
 function onEachFeature(feature, layer) {
@@ -105,3 +98,27 @@ info.update = function (props) {
 };
 
 info.addTo(myMap);
+
+// BOTTOM RIGHT LEGEND
+
+var legend = L.control({position: 'bottomright'});
+
+
+
+legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [0, 10, 20, 40, 70, 100, 500, 1000, 1500],
+        labels = [];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + colorScale(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }
+
+    return div;
+};
+
+legend.addTo(myMap);
