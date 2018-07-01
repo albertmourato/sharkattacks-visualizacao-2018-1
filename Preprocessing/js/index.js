@@ -71,3 +71,11 @@ function getCountryIncidentsValue(country){
     var aux = x[country.toUpperCase()];
     return aux != undefined? aux.length : "None";
 }
+
+var dictToList = function(dict){
+    var list = [];
+    for(var key in dict){
+        if(key !== "undefined") list.push([key, dict[key].length]);
+    }
+    return list;
+}
