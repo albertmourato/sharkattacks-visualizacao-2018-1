@@ -1,3 +1,5 @@
+var histograms = [];
+
 var histWidth = 280;
 var histHeight = 380;
 
@@ -50,6 +52,9 @@ d3.csv("./data/attacks.csv", (data => {
 
     sexHist = new Histogram(containerSexHist, 0, 0, histWidth, histHeight,
         "Attacks by sex", dictToList('sex'));
+
+    histograms.push(fatalHist);
+    histograms.push(sexHist);
 }));
  
 var a = [{}];
@@ -99,6 +104,18 @@ var dictToList = function(column){
     var list = [];
     for(var key in dict){
         if(key !== "undefined") list.push([key, dict[key].length]);
+    }
+    return list;
+}
+
+var dictToListByCountry = function(column, country){
+    var totalDict = groupBy(column, a);
+    var dict = groupBy(column, groupBy('country', a)[country.toUpperCase()]);
+    var list = [];
+    for(var key in totalDict){
+        if(key !== "undefined"){
+            dict[key] ? list.push([key, dict[key].length]) : list.push([key, 0]);
+        }
     }
     return list;
 }
