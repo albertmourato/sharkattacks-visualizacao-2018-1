@@ -2,7 +2,7 @@ class Histogram {
     constructor(container, screenX, screenY, totalWidth, totalHeight, chartTitle, initialData){
         this.data = initialData;
 
-        this.renderingArea = {x: 30, y: 0, width: 230, height: 320};
+        this.renderingArea = {x: screenX, y: screenY, width: totalWidth, height: totalHeight};
         this.margins = {top: 50, right: 5, bottom: 20, left: 25};
 
         this.width = this.renderingArea.width - this.margins.right - this.margins.left;
@@ -53,7 +53,6 @@ class Histogram {
         var interval = d3.extent(dataset, d => d[1]);
         this.yScale.domain([0, interval[1]]);
 
-        console.log(dataset);
         this.updatePlot();
     }
 

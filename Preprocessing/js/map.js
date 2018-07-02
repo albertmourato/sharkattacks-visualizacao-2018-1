@@ -82,10 +82,11 @@ function onEachFeature(feature, layer) {
 
 function countryInfo(e){
     var layer = e.target;
-    //console.log(layer.feature.properties);
     var country = layer.feature.properties.ADMIN.toUpperCase();
+
     fatalHist.setData(dictToListByCountry('fatal', country));
     sexHist.setData(dictToListByCountry('sex', country));
+    typeHist.setData(dictToListByCountry('type', country));
 }
 
 // TOP RIGHT INFO
