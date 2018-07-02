@@ -87,6 +87,10 @@ function countryInfo(e){
     fatalHist.setData(dictToListByCountry('fatal', country));
     sexHist.setData(dictToListByCountry('sex', country));
     typeHist.setData(dictToListByCountry('type', country));
+
+    d3.select("#areahist").select("svg").selectAll("*").remove();
+    areaHist = new Histogram(containerAreaHist, 30, 0, areaWidth - 50, histHeight - 50,
+        "Attacks by area", attacksByArea(country));
 }
 
 // TOP RIGHT INFO

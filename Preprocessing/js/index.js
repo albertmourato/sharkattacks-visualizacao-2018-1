@@ -23,6 +23,14 @@ var containerTypeHist = d3.select("#typehist")
     .attr("height", histHeight);
 var typeHist = {};
 
+var areaWidth = 480;
+
+var containerAreaHist = d3.select("#areahist")
+    .append("svg")
+    .attr("width", areaWidth)
+    .attr("height", histHeight);
+var areaHist = {};
+
 async function getLocationCoordinates(city, area, country){
     var address = city+", "+area+", "+country;
     await geocoder.geocode({'address': address}, (results, status)=>{
@@ -63,9 +71,13 @@ d3.csv("./data/attacks.csv", (data => {
     typeHist = new Histogram(containerTypeHist, 30, 0, typeWidth - 50, histHeight - 50,
         "Attacks by type", dictToList('type'));
 
+    areaHist = new Histogram(containerAreaHist, 30, 0, areaWidth - 50, histHeight - 50,
+        "Attacks by area", attacksByArea('all'));
+
     histograms.push(fatalHist);
     histograms.push(sexHist);
     histograms.push(typeHist);
+    histograms.push(areaHist);
 }));
  
 var a = [{}];
@@ -110,7 +122,7 @@ function getCountryIncidentsValue(country){
     return aux != undefined? aux.length : "None";
 }
 
-var dictToList = function(column){
+function dictToList(column){
     var dict = groupBy(column, a);
     var list = [];
     for(var key in dict){
@@ -119,7 +131,7 @@ var dictToList = function(column){
     return list;
 }
 
-var dictToListByCountry = function(column, country){
+function dictToListByCountry(column, country){
     var totalDict = groupBy(column, a);
     var dict = groupBy(column, groupBy('country', a)[country.toUpperCase()]);
     var list = [];
@@ -129,4 +141,11 @@ var dictToListByCountry = function(column, country){
         }
     }
     return list;
+}
+
+function attacksByArea(country){
+    var dict = (country === 'all') ? dictToList('area', a) : dictToListByCountry('area', country);
+    dict = dict.filter(d => d[1] !== 0)
+                .sort((a, b) => b[1] - a[1]);
+    return (dict.length <= 5) ? dict : dict.slice(0, 5);
 }
