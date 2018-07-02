@@ -1,5 +1,5 @@
 var histograms = [];
-var dornutCharts = [];
+var donutCharts = [];
 var histWidth = 230;
 var histHeight = 420;
 
@@ -22,6 +22,14 @@ var containerTypeHist = d3.select("#typehist")
     .attr("width", typeWidth)
     .attr("height", histHeight);
 var typeHist = {};
+
+var areaWidth = 480;
+
+var containerAreaHist = d3.select("#areahist")
+    .append("svg")
+    .attr("width", areaWidth)
+    .attr("height", histHeight);
+var areaHist = {};
 
 async function getLocationCoordinates(city, area, country){
     var address = city+", "+area+", "+country;
@@ -63,14 +71,19 @@ d3.csv("./data/attacks.csv", (data => {
     typeHist = new Histogram(containerTypeHist, 30, 0, typeWidth - 50, histHeight - 50,
         "Attacks by type", dictToList('type'));
 
+    areaHist = new Histogram(containerAreaHist, 30, 0, areaWidth - 50, histHeight - 50,
+        "Attacks by area", attacksByArea('all'));
+
     histograms.push(fatalHist);
     histograms.push(sexHist);
     histograms.push(typeHist);
     
-    dornutChart(dictToList2('fatal') , '#fatalDornut' );
-    dornutChart(dictToList2('sex') , '#sexDornut');
-    dornutChart(dictToList2('type'), '#typeDornut');
+    donutChart(dictToList2('fatal') , '#fatalDonut' );
+    donutChart(dictToList2('sex') , '#sexDonut');
+    donutChart(dictToList2('type'), '#typeDonut');
+    donutChart(attacksByArea2('all'), '#areaDonut');
 
+    histograms.push(areaHist);
 }));
  
 var a = [{}];
@@ -115,7 +128,7 @@ function getCountryIncidentsValue(country){
     return aux != undefined? aux.length : "None";
 }
 
-var dictToList = function(column){
+function dictToList(column){
     var dict = groupBy(column, a);
     var list = [];
     for(var key in dict){
@@ -137,7 +150,7 @@ var dictToList2 = function(column){
     return list;
 }
 
-var dictToListByCountry = function(column, country){
+function dictToListByCountry(column, country){
     var totalDict = groupBy(column, a);
     var dict = groupBy(column, groupBy('country', a)[country.toUpperCase()]);
     var list = [];
@@ -149,8 +162,25 @@ var dictToListByCountry = function(column, country){
     return list;
 }
 
+var dictToListByCountry2 = function(column, country){
+    var totalDict = groupBy(column, a);
+    var dict = groupBy(column, groupBy('country', a)[country.toUpperCase()]);
+    var list = [];
+    
+    for(var key in totalDict){
+        var temp = {type: key, value: dict[key].length }
+        if(key == "") temp = { type: "Unknown", value: dict[key].length  }; 
 
-var dornutChart =  function(dataset, dv) {
+        if(key !== "undefined"){
+            dict[key] ? list.push(temp) : list.push({type: key, value: 0});
+        }
+    }
+    return list;
+}
+
+
+
+var donutChart =  function(dataset, dv) {
     'use strict';
     var tooltip = d3.select(dv)            
     .append('div')                             
@@ -229,3 +259,16 @@ var dornutChart =  function(dataset, dv) {
 
 }
   
+function attacksByArea(country){
+    var dict = (country === 'all') ? dictToList('area', a) : dictToListByCountry('area', country);
+    dict = dict.filter(d => d[1] !== 0)
+                .sort((a, b) => b[1] - a[1]);
+    return (dict.length <= 5) ? dict : dict.slice(0, 5);
+}
+
+function attacksByArea2(country){
+    var dict = (country === 'all') ? dictToList2('area', a) : dictToListByCountry2('area', country);
+    dict = dict.filter(d => d[1] !== 0)
+                .sort((a, b) => b[1] - a[1]);
+    return (dict.length <= 5) ? dict : dict.slice(0, 5);
+}

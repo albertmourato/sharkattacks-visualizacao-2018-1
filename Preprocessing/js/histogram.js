@@ -16,8 +16,8 @@ class Histogram {
             .domain(d3.range(this.data.length))
             .range([0, this.width])
             .round(true)
-            .paddingInner(0.15)
-            .paddingOuter(0.1);
+            .paddingInner(0.2)
+            .paddingOuter(0.15);
 
         this.xAxis = d3.axisBottom(this.xScale)
             .tickFormat(d => ((this.data[d][0] === "") ? "Unknown" : this.data[d][0]));
@@ -63,7 +63,7 @@ class Histogram {
 
     updateBars(){
         var plot = this;
-        var bars = this.canvas.selectAll("rect").remove().exit().data(this.data);
+        var bars = this.canvas.selectAll("rect").exit().remove().data(this.data);
 
         bars.enter()
             .merge(bars)
