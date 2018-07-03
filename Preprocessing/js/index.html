@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Shark Attack</title>
+    <title>Shark Attacks</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD97TcpCdrbvFcxlIl4e_7_F1NzmVDM_LY"></script>
@@ -18,15 +18,13 @@
 <body>
     <div id="myMap" style="height: 500px;"> </div>
 
-    <div id="fatalhist" style="float: left"></div>
-    <div id="fatalDonut" style="float: left"></div>
-    <div id="sexhist" style="float: left"></div>
-    <div id="sexDonut" style="float: left"></div>
+    <div class="donutChart" id="fatalDonut" style="float: left"></div>
+    <div class="donutChart" id="sexDonut"></div>
     <div id="typehist" style="float: left"></div>
-    <div id="typeDonut" style="float: left"></div>
-    <div id="areahist"></div>
-    <div id="areaDonut" style="float: left"></div>
+    <div id="areahist" style="float: left"></div>
+
     <script src="histogram.js"></script>
+    <script src="donutChart.js"></script>
     <script src="index.js"></script>
     <script src="map.js"></script>
     <script>drawIncidentByState();</script>

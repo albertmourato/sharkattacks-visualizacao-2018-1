@@ -84,13 +84,19 @@ function countryInfo(e){
     var layer = e.target;
     var country = layer.feature.properties.ADMIN.toUpperCase();
 
-    fatalHist.setData(dictToListByCountry('fatal', country));
-    sexHist.setData(dictToListByCountry('sex', country));
+    // fatalHist.setData(dictToListByCountry('fatal', country));
+    // sexHist.setData(dictToListByCountry('sex', country));
     typeHist.setData(dictToListByCountry('type', country));
 
     d3.select("#areahist").select("svg").selectAll("*").remove();
     areaHist = new Histogram(containerAreaHist, 30, 0, areaWidth - 50, histHeight - 50,
         "Attacks by area", attacksByArea(country));
+
+    d3.select("#fatalDonut").selectAll("*").remove();
+    donutChart(dictToListByCountry('fatal', country) , '#fatalDonut', "Fattal attacks");
+
+    d3.select("#sexDonut").selectAll("*").remove();
+    donutChart(dictToListByCountry('sex', country) , '#sexDonut', "Attacks by gender");
 }
 
 // TOP RIGHT INFO
