@@ -29,9 +29,9 @@ var containerAreaHist = d3.select("#areahist")
     .attr("height", histHeight);
 var areaHist = {};
 
-async function getLocationCoordinates(city, area, country){
+function getLocationCoordinates(city, area, country){
     var address = city+", "+area+", "+country;
-    await geocoder.geocode({'address': address}, (results, status)=>{
+    geocoder.geocode({'address': address}, (results, status)=>{
         if(status == google.maps.GeocoderStatus.OK){
             var lat = results[0].geometry.location.lat();
             var lng = results[0].geometry.location.lng();
@@ -99,6 +99,10 @@ var geocoder = new google.maps.Geocoder();
 
 
 function groupBy(field, data){
+    if(data == undefined){
+        alert('No data is available');
+        return;
+    }
     return data.reduce(function (r, a) {
         r[a[field]] = r[a[field]] || [];
         r[a[field]].push(a);
@@ -106,13 +110,14 @@ function groupBy(field, data){
     }, Object.create(null));
 }
 
-function getCountryIncidentsValue(country){
+function countIncidentsByCountry(country){
     var x = groupBy('country', a);
     var aux = x[country.toUpperCase()];
 
     return aux != undefined? aux.length : "None";
 }
 
+//<<<<<<< HEAD
 function dictToList(column){
     var dict = groupBy(column, a);
     var list = [];
@@ -175,4 +180,35 @@ function attacksByArea2(country){
     dict = dict.filter(d => d[1] !== 0)
                 .sort((a, b) => b[1] - a[1]);
     return (dict.length <= 5) ? dict : dict.slice(0, 5);
+}
+//=======
+function generateYearsArray(){
+    var arr = [];
+    for(var i = brushYearStart; i <= brushYearEnd; i++){
+        arr.push(i);
+    }
+    return arr;
+}
+
+function countIncidentsByYear(year){
+    var x = groupBy('year', a);
+    var aux = x[year];
+    return aux != undefined? aux.length : 0;
+}
+
+function getIncidentsByYear(year){
+    var x = groupBy('year', a);
+    return x[year];
+}
+
+function countIncidents(){
+    return Object.keys(a).length;
+}
+
+function countIncidentsByCountryYear(country, year){
+    var incidents = groupBy('year', a);
+    var incidentsByYear = groupBy('country', incidents[year]);
+    var country = incidentsByYear[country.toUpperCase()];
+    return country != undefined ? country.length : 0;
+//>>>>>>> master
 }
