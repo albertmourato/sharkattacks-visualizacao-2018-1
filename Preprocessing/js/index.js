@@ -75,7 +75,7 @@ d3.csv("./data/attacks.csv", (data => {
     typeHist = new Histogram(containerTypeHist, 30, 0, typeWidth - 50, histHeight - 50,
         "Attacks by type", dictToList('type'));
 
-    areaHist = new Histogram(containerAreaHist, 0, 0, areaWidth - 50, histHeight - 50,
+    areaHist = new Histogram(containerAreaHist, 20, 0, areaWidth - 50, histHeight - 50,
         "Attacks by area", attacksByArea('all'));
     
     donutChart(dictToList('fatal') , '#fatalDonut', "Fattal attacks");
