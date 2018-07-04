@@ -37,7 +37,7 @@ function highlightFeature(e) {
         weight: 2,
         color: '#283747',
         dashArray: '',
-        fillOpacity: 0.7
+        fillOpacity: 1
     });
 
     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -74,7 +74,7 @@ function style(feature) {
         opacity: 1,
         weight: 1,
         color: "#FFF",
-        fillOpacity: 1
+        fillOpacity: 0.7
     }
 }
 
@@ -90,19 +90,7 @@ function countryInfo(e){
     var layer = e.target;
     var country = layer.feature.properties.ADMIN.toUpperCase();
 
-    // fatalHist.setData(dictToListByCountry('fatal', country));
-    // sexHist.setData(dictToListByCountry('sex', country));
-    typeHist.setData(dictToListByCountry('type', country));
-
-    d3.select("#areahist").select("svg").selectAll("*").remove();
-    areaHist = new Histogram(containerAreaHist, 30, 0, areaWidth - 50, histHeight - 50,
-        "Attacks by area", attacksByArea(country));
-
-    d3.select("#fatalDonut").selectAll("*").remove();
-    donutChart(dictToListByCountry('fatal', country) , '#fatalDonut', "Fattal attacks");
-
-    d3.select("#sexDonut").selectAll("*").remove();
-    donutChart(dictToListByCountry('sex', country) , '#sexDonut', "Attacks by gender");
+    updateCharts(country, getYear(), isFilterChecked());
 }
 
 // TOP RIGHT INFO

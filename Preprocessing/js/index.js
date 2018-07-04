@@ -117,7 +117,6 @@ function countIncidentsByCountry(country){
     return aux != undefined? aux.length : "None";
 }
 
-//<<<<<<< HEAD
 function dictToList(column){
     var dict = groupBy(column, a);
     var list = [];
@@ -152,6 +151,30 @@ function dictToListByCountry(column, country){
     return list;
 }
 
+function dictToListByCountrySubData(column, country, data){
+    var totalDict = groupBy(column, a);
+    var dict = groupBy(column, groupBy('country', data)[country.toUpperCase()]);
+    var list = [];
+    for(var key in totalDict){
+        if(key !== "undefined"){
+            dict[key] ? list.push([key, dict[key].length]) : list.push([key, 0]);
+        }
+    }
+    return list;
+}
+
+function dictToListByYear(data, column, year){
+    var totalDict = groupBy(column, a);
+    var dict = groupBy(column, groupBy('year', data)[year]);
+    var list = [];
+    for(var key in totalDict){
+        if(key !== "undefined"){
+            dict[key] ? list.push([key, dict[key].length]) : list.push([key, 0]);
+        }
+    }
+    return list;
+}
+
 var dictToListByCountry2 = function(column, country){
     var totalDict = groupBy(column, a);
     var dict = groupBy(column, groupBy('country', a)[country.toUpperCase()]);
@@ -175,13 +198,20 @@ function attacksByArea(country){
     return (dict.length <= 5) ? dict : dict.slice(0, 5);
 }
 
+function attacksByAreaSubData(country, data){
+    var dict = (country === 'all') ? dictToList('area', data) : dictToListByCountrySubData('area', country, data);
+    dict = dict.filter(d => d[1] !== 0)
+                .sort((a, b) => b[1] - a[1]);
+    return (dict.length <= 5) ? dict : dict.slice(0, 5);
+}
+
 function attacksByArea2(country){
     var dict = (country === 'all') ? dictToList2('area', a) : dictToListByCountry2('area', country);
     dict = dict.filter(d => d[1] !== 0)
                 .sort((a, b) => b[1] - a[1]);
     return (dict.length <= 5) ? dict : dict.slice(0, 5);
 }
-//=======
+
 function generateYearsArray(){
     var arr = [];
     for(var i = brushYearStart; i <= brushYearEnd; i++){
@@ -210,5 +240,36 @@ function countIncidentsByCountryYear(country, year){
     var incidentsByYear = groupBy('country', incidents[year]);
     var country = incidentsByYear[country.toUpperCase()];
     return country != undefined ? country.length : 0;
-//>>>>>>> master
+}
+
+function updateCharts(country, year, checked){
+    var typeData, areaData, fatalData, genderData;
+    
+    if(checked){
+        var incidents = groupBy('country', getIncidentsByYear(year));
+
+        typeData = dictToListByCountrySubData('type', country, incidents[country]);
+        areaData = attacksByAreaSubData(country, incidents[country]);
+        fatalData = dictToListByCountrySubData('fatal', country, incidents[country]);
+        genderData = dictToListByCountrySubData('sex', country, incidents[country]);
+    } else {
+        typeData = dictToListByCountry('type', country);
+        areaData = attacksByArea(country);
+        fatalData = dictToListByCountry('fatal', country);
+        genderData = dictToListByCountry('sex', country);
+    }
+
+    d3.select("#typehist").select("svg").selectAll("*").remove();
+    typeHist = new Histogram(containerTypeHist, 30, 0, typeWidth - 50, histHeight - 50,
+        "Attacks by type", typeData);
+
+    d3.select("#areahist").select("svg").selectAll("*").remove();
+    areaHist = new Histogram(containerAreaHist, 30, 0, areaWidth - 50, histHeight - 50,
+        "Attacks by area", areaData);
+
+    d3.select("#fatalDonut").selectAll("*").remove();
+    donutChart(fatalData , '#fatalDonut', "Fattal attacks");
+
+    d3.select("#sexDonut").selectAll("*").remove();
+    donutChart(genderData , '#sexDonut', "Attacks by gender");
 }
