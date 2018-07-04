@@ -29,6 +29,15 @@ var containerAreaHist = d3.select("#areahist")
     .attr("height", histHeight);
 var areaHist = {};
 
+var yearWidth = window.innerWidth - 10;
+var yearHeight = 200;
+
+var containerYearHist = d3.select("#yearhist")
+    .append("svg")
+    .attr("width", yearWidth)
+    .attr("height", yearHeight);
+var yearHist = {};
+
 function getLocationCoordinates(city, area, country){
     var address = city+", "+area+", "+country;
     geocoder.geocode({'address': address}, (results, status)=>{
@@ -60,10 +69,13 @@ d3.csv("./data/attacks.csv", (data => {
     });
     filterByValidKeys(dados);
 
+    yearHist = new YearHistogram(containerYearHist, 30, 0, yearWidth - 50, yearHeight - 50,
+        "Attacks by year", dictToList('year').filter(d => d[0] >= 1900));
+
     typeHist = new Histogram(containerTypeHist, 30, 0, typeWidth - 50, histHeight - 50,
         "Attacks by type", dictToList('type'));
 
-    areaHist = new Histogram(containerAreaHist, 30, 0, areaWidth - 50, histHeight - 50,
+    areaHist = new Histogram(containerAreaHist, 0, 0, areaWidth - 50, histHeight - 50,
         "Attacks by area", attacksByArea('all'));
     
     donutChart(dictToList('fatal') , '#fatalDonut', "Fattal attacks");
