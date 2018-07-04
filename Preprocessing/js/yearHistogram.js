@@ -20,7 +20,7 @@ class YearHistogram {
             .paddingOuter(0.1);
 
         this.xAxis = d3.axisBottom(this.xScale)
-            .tickValues(this.xScale.domain().filter(function(d,i){ console.log(d); return !(i%10)}))
+            .tickValues(this.xScale.domain().filter(function(d,i){ return !(i%10)}))
             .tickFormat(d => ((this.data[d][0] === "") ? "Unknown" : this.data[d][0]));
 
         this.dataYInterval = d3.extent(this.data, d => d[1]);

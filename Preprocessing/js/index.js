@@ -70,7 +70,7 @@ d3.csv("./data/attacks.csv", (data => {
     filterByValidKeys(dados);
 
     yearHist = new YearHistogram(containerYearHist, 30, 0, yearWidth - 50, yearHeight - 50,
-        "Attacks by year", dictToList('year').filter(d => d[0] >= 1900));
+        "Attacks by year", dictToList('year'));
 
     typeHist = new Histogram(containerTypeHist, 30, 0, typeWidth - 50, histHeight - 50,
         "Attacks by type", dictToList('type'));
@@ -255,21 +255,27 @@ function countIncidentsByCountryYear(country, year){
 }
 
 function updateCharts(country, year, checked){
-    var typeData, areaData, fatalData, genderData;
+    var yearData, typeData, areaData, fatalData, genderData;
     
     if(checked){
         var incidents = groupBy('country', getIncidentsByYear(year));
 
+        yearData = dictToListByCountrySubData('year', country, incidents[country]);
         typeData = dictToListByCountrySubData('type', country, incidents[country]);
         areaData = attacksByAreaSubData(country, incidents[country]);
         fatalData = dictToListByCountrySubData('fatal', country, incidents[country]);
         genderData = dictToListByCountrySubData('sex', country, incidents[country]);
     } else {
+        yearData = dictToListByCountry('year', country);
         typeData = dictToListByCountry('type', country);
         areaData = attacksByArea(country);
         fatalData = dictToListByCountry('fatal', country);
         genderData = dictToListByCountry('sex', country);
     }
+
+    d3.select("#yearhist").select("svg").selectAll("*").remove();
+    yearHist = new YearHistogram(containerYearHist, 30, 0, yearWidth - 50, yearHeight - 50,
+        "Attacks by year", yearData);
 
     d3.select("#typehist").select("svg").selectAll("*").remove();
     typeHist = new Histogram(containerTypeHist, 30, 0, typeWidth - 50, histHeight - 50,
