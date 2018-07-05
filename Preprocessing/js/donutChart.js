@@ -22,9 +22,11 @@ var donutChart =  function(dataset, dv, chartTitle) {
 
     //var radius = Math.min(totalWidth, totalHeight) / 2;
     var radius = 150;
+    
+    var color = d3.scaleOrdinal(["#436eba","#ea4d5a","#dee0e2"]);
 
-    var color = d3.scaleOrdinal(["#660000","#990000","#CC0000","#FF0000","#CC3333",
-    "#FF6666","#FF9999","#FFCCCC"]);
+    // var color = d3.scaleOrdinal(["#660000","#990000","#CC0000","#FF0000","#CC3333",
+    // "#FF6666","#FF9999","#FFCCCC"]);
 
     var svg = d3.select(dv)
     .append('svg')
