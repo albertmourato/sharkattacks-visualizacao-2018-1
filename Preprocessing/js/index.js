@@ -1,3 +1,5 @@
+var selectedCountry;
+
 var histWidth = 230;
 var histHeight = 420;
 
@@ -69,20 +71,35 @@ d3.csv("./data/attacks.csv", (data => {
     });
     filterByValidKeys(dados);
 
+    initCharts();
+}));
+
+function initCharts(){
+    d3.select("#yearhist").select("svg").selectAll("*").remove();
     yearHist = new YearHistogram(containerYearHist, 30, 0, yearWidth - 50, yearHeight - 50,
         "Attacks by year", dictToList('year').slice(0, dictToList('year').length-3));
 
+    d3.select("#typehist").select("svg").selectAll("*").remove();
     typeHist = new Histogram(containerTypeHist, 30, 0, typeWidth - 50, histHeight - 50,
         "Attacks by type", dictToList('type'));
 
+    d3.select("#areahist").select("svg").selectAll("*").remove();
     areaHist = new Histogram(containerAreaHist, 20, 0, areaWidth - 50, histHeight - 50,
         "Attacks by area", attacksByArea('all'));
     
+    d3.select("#fatalDonut").selectAll("*").remove();
     donutChart(dictToList('fatal') , '#fatalDonut', "Fattal attacks");
+
+    d3.select("#sexDonut").selectAll("*").remove();
     donutChart(dictToList('sex') , '#sexDonut', "Attacks by gender");
 
-}));
- 
+    d3.select("#countryLbl").text("");
+    d3.select("#yearLbl").text("");
+    d3.select('#checkbox').property('checked', false);
+
+    selectedCountry = 'all';
+}
+
 var a = [{}];
 var invalid = 'none None "" unknown';
  
@@ -210,6 +227,13 @@ function attacksByArea(country){
     return (dict.length <= 5) ? dict : dict.slice(0, 5);
 }
 
+function attacksByAreaYear(year){
+    var dict = dictToListByYear(a, 'area', year);
+    dict = dict.filter(d => d[1] !== 0)
+                .sort((a, b) => b[1] - a[1]);
+    return (dict.length <= 5) ? dict : dict.slice(0, 5);
+}
+
 function attacksByAreaSubData(country, data){
     var dict = (country === 'all') ? dictToList('area', data) : dictToListByCountrySubData('area', country, data);
     dict = dict.filter(d => d[1] !== 0)
@@ -294,3 +318,38 @@ function updateCharts(country, year, checked){
     d3.select("#sexDonut").selectAll("*").remove();
     donutChart(genderData , '#sexDonut', "Attacks by gender");
 }
+
+function updateChartsByYear(year, checked){
+    var yearData, typeData, areaData, fatalData, genderData;
+    
+    if(checked){
+        console.log(year);
+        yearData = dictToList('year').slice(0, dictToList('year').length-3);
+        //yearDataAux = dictToListByCountry('year', country);
+        //yearData = yearDataAux.slice(0, yearDataAux.length - 3);
+        typeData = dictToListByYear(a, 'type', year);
+        areaData = attacksByAreaYear(year);
+        fatalData = dictToListByYear(a, 'fatal', year);
+        genderData = dictToListByYear(a, 'sex', year);
+
+        d3.select("#yearhist").select("svg").selectAll("*").remove();
+        yearHist = new YearHistogram(containerYearHist, 30, 0, yearWidth - 50, yearHeight - 50,
+            "Attacks by year", yearData);
+
+        d3.select("#typehist").select("svg").selectAll("*").remove();
+        typeHist = new Histogram(containerTypeHist, 30, 0, typeWidth - 50, histHeight - 50,
+            "Attacks by type", typeData);
+
+        d3.select("#areahist").select("svg").selectAll("*").remove();
+        areaHist = new Histogram(containerAreaHist, 30, 0, areaWidth - 50, histHeight - 50,
+            "Attacks by area", areaData);
+
+        d3.select("#fatalDonut").selectAll("*").remove();
+        donutChart(fatalData , '#fatalDonut', "Fattal attacks");
+
+        d3.select("#sexDonut").selectAll("*").remove();
+        donutChart(genderData , '#sexDonut', "Attacks by gender");
+    }
+}
+
+//dictToListByYear(a, 'fatal', 2013)

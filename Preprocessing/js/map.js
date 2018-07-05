@@ -58,7 +58,7 @@ function style(feature) {
     if(filterChecked){
         x = getIncidentsByYear(year);
         x = groupBy('country', x);
-        console.log(filterChecked);
+        //console.log(filterChecked);
     }
 
     var color;
@@ -89,6 +89,10 @@ function onEachFeature(feature, layer) {
 function countryInfo(e){
     var layer = e.target;
     var country = layer.feature.properties.ADMIN.toUpperCase();
+
+    d3.select("#countryLbl")
+        .text(country);
+    selectedCountry = country;
 
     updateCharts(country, getYear(), isFilterChecked());
 }

@@ -29,8 +29,13 @@
         2018
         <input id="checkbox" type="checkbox" value="false" class="checkbox" onchange="updateWorld(year.value, this.checked)"/>
         <label for="checkbox">Filter by year</label>
+        <br><br>
     </div>
-
+    <span style="margin-left: 35%; margin-top:50px; margin-bottom: 50px;">
+            <strong>Country: </strong> <span id="countryLbl"></span> | <strong>Year: </strong> <span id="yearLbl"></span> | 
+            <a href="#" onclick="initCharts(); updateWorld(undefined, false)">Reset filters<a>
+    </span>
+    
     <div id="yearhist"></div>
     <div class="donutChart" id="fatalDonut" style="float: left"></div>
     <div class="donutChart" id="sexDonut"></div>
